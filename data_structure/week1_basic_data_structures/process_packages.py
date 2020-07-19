@@ -19,17 +19,16 @@ class Buffer:
                 self.front = self.rear = -1
             else:
                 self.front = (self.front + 1) % self.size
-            
-        if not (self.rear+1)%self.size==self.front:
+
+        if not (self.rear + 1) % self.size == self.front:
             if self.front == -1:
-                started_at=request.arrived_at
+                started_at = request.arrived_at
                 self.front = self.rear = 0
             else:
-                started_at = self.finish_time[rear]
+                started_at = self.finish_time[self.rear]
                 self.rear = (self.rear + 1) % self.size
             self.finish_time[self.rear] = started_at + request.time_to_process
             return Response(False, started_at)
-                
 
         return Response(True, -1)
 
