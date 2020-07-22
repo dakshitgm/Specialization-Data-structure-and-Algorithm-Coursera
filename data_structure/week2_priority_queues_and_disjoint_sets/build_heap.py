@@ -1,7 +1,22 @@
 # python3
+def heapify(data, n, i, swaps):
+    smallest = i
+    left_child = (i * 2) + 1
+    right_child = (i * 2) + 2
+
+    if left_child < n and data[left_child] < data[smallest]:
+        smallest = left_child
+
+    if right_child < n and data[right_child] < data[smallest]:
+        smallest = right_child
+
+    if smallest != i:
+        data[i], data[smallest] = data[smallest], data[i]
+        swaps.append((i, smallest))
+        heapify(data, n, smallest, swaps)
 
 
-def build_heap(data):
+def build_heap(data, n):
     """Build a heap from ``data`` inplace.
 
     Returns a sequence of swaps performed by the algorithm.
@@ -13,11 +28,8 @@ def build_heap(data):
     #
     # TODO: replace by a more efficient implementation
     swaps = []
-    for i in range(len(data)):
-        for j in range(i + 1, len(data)):
-            if data[i] > data[j]:
-                swaps.append((i, j))
-                data[i], data[j] = data[j], data[i]
+    for i in reversed(range(n // 2)):
+        heapify(data, n, i, swaps)
     return swaps
 
 
@@ -26,7 +38,7 @@ def main():
     data = list(map(int, input().split()))
     assert len(data) == n
 
-    swaps = build_heap(data)
+    swaps = build_heap(data, n)
 
     print(len(swaps))
     for i, j in swaps:
