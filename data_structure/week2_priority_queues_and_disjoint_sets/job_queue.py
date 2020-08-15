@@ -3,7 +3,6 @@
 from collections import namedtuple
 
 AssignedJob = namedtuple("AssignedJob", ["worker", "started_at"])
-thread = namedtuple("tread", ["free_at", "no"])
 
 
 def heapify(threads, n, i):
