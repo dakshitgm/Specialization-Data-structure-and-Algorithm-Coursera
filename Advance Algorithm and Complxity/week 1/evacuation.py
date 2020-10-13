@@ -1,4 +1,5 @@
 # python3
+import queue
 
 class Edge:
 
@@ -6,12 +7,10 @@ class Edge:
         self.u = u
         self.v = v
         self.capacity = capacity
-        self.flow = 0
 
 # This class implements a bit unusual scheme for storing edges of the graph,
 # in order to retrieve the backward edge for a given edge quickly.
 class FlowGraph:
-
     def __init__(self, n):
         # List of all - forward and backward - edges
         self.edges = []
@@ -45,8 +44,8 @@ class FlowGraph:
         # should be taken.
         #
         # It turns out that id ^ 1 works for both cases. Think this through!
-        self.edges[id].flow += flow
-        self.edges[id ^ 1].flow -= flow
+        self.edges[id].capacity -= flow
+        self.edges[id ^ 1].capacity += flow
 
 
 def read_data():
@@ -61,8 +60,37 @@ def read_data():
 def max_flow(graph, from_, to):
     flow = 0
     # your code goes here
-    return flow
+    while True:
+        qu=queue.Queue()
+        qu.put(from_)
+        prev=[None]*graph.size()
+        prev[from_]=-1
+        while not qu.empty():
+            curVertex=qu.get()
+            for edgeId in graph.get_ids(curVertex):
+                edge=graph.get_edge(edgeId)
+                desVertex=edge.v
+                if prev[desVertex]==None and edge.capacity>0:
+                    prev[desVertex]=edgeId
+                    if desVertex==to:
+                        break
+                    qu.put(desVertex)
+        if prev[to]==None:
+            break
+        minFlow=float('inf')
+        curEdgeId=prev[to]
+        while curEdgeId>=0:
+            curEdge=graph.get_edge(curEdgeId)
+            minFlow=min(minFlow, curEdge.capacity)
+            curEdgeId=prev[curEdge.u]
+        
+        curEdgeId=prev[to]
+        while curEdgeId>=0:
+            graph.add_flow(curEdgeId, minFlow)
+            curEdgeId=prev[graph.get_edge(curEdgeId).u]
+        flow+=minFlow
 
+    return flow
 
 if __name__ == '__main__':
     graph = read_data()
